@@ -5,4 +5,5 @@ Embedded persistent storage for Golang
 - In-memory cache
 - Two level mutexes (thread safe)
 - Support buckets (tables), primary and secondary indexes
+- Autoincrement primary key on insert
 - High performance (hundreds ops/sec)
