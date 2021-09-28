@@ -1,5 +1,7 @@
 package godb
 
+import "path/filepath"
+
 type Storage struct {
 	root           string
 	payloadStorage map[string]map[string][]byte
@@ -8,12 +10,9 @@ type Storage struct {
 	memTableMx     *TwoLevelMutex
 }
 
-func NewStorage(dir string) *Storage {
-	if !FileExists(dir) {
-		panic(ValueError("storage directory must exists", dir))
-	}
+func NewStorage(dirname string) *Storage {
 	return &Storage{
-		root:           dir,
+		root:           filepath.Join(ProcessDir(), dirname),
 		payloadStorage: make(map[string]map[string][]byte),
 		keysStorage:    make(map[string][]string),
 		diskTableMx:    NewTwoLevelMutex(),
