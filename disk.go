@@ -59,6 +59,9 @@ func (db *Storage) diskKeys(bucket string) ([]string, error) {
 		if f.IsDir() {
 			continue
 		}
+		if f.Name() == ".autoinc" {
+			continue
+		}
 		list = append(list, f.Name())
 	}
 	return list, nil
