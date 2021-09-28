@@ -10,5 +10,5 @@ Embedded persistent storage for Golang
 
 ```
 cpu: Intel(R) Core(TM) i7-9750H CPU @ 2.60GHz
-BenchmarkReadRandomDocument-12    	 7522686	       156.9 ns/op	       0 B/op	       0 allocs/op
+BenchmarkReadRandomDocument-12   7522686   156.9 ns/op   0 B/op   0 allocs/op
 ```
