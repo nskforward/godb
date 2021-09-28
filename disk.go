@@ -42,11 +42,15 @@ func (db *Storage) diskKeys(bucket string) ([]string, error) {
 	if !IsNameCorrect(bucket) {
 		return nil, ValueError("bucket name contains not allowed characters", bucket)
 	}
+	dir := db.GetBucketDir(bucket)
+	if !FileExists(dir) {
+		return []string{}, nil
+	}
 	mtx := db.diskTableMx.Get(bucket)
 	mtx.Lock()
 	defer mtx.Unlock()
 
-	arr, err := ioutil.ReadDir(db.GetBucketDir(bucket))
+	arr, err := ioutil.ReadDir(dir)
 	if err != nil {
 		return nil, err
 	}
