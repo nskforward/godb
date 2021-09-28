@@ -1,52 +1,28 @@
 package godb
 
 import (
-	"encoding/json"
-	"fmt"
 	"io/ioutil"
-	"os"
 	"path/filepath"
 )
 
-func (db *Storage) DiskCreate(bucket string, payload interface{}, labels []Label) (*Record, error) {
-	if !IsNameCorrect(bucket) {
-		return nil, stringValueError("incorrect bucket name", bucket)
-	}
-	dir := filepath.Join(db.storageDir, bucket)
-	payloadBytes, err := json.Marshal(payload)
+func (db *Storage) diskWrite(bucket string, key int64, payload []byte) error {
+	dir, err := db.CreateBucket(bucket)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	mtx := db.DiskMutex(bucket)
+	mtx := db.diskTableMx.Get(bucket)
 	mtx.Lock()
 	defer mtx.Unlock()
+	return ioutil.WriteFile(filepath.Join(dir, Int64ToStr(key)), payload, 0755)
+}
 
-	err = os.MkdirAll(dir, 0755)
-	if err != nil {
-		return nil, err
+func (db *Storage) DiskRead(bucket string, key int64) ([]byte, error) {
+	mtx := db.diskTableMx.Get(bucket)
+	mtx.Lock()
+	defer mtx.Unlock()
+	file := filepath.Join(db.root, bucket, Int64ToStr(key))
+	if !FileExists(file) {
+		return nil, nil
 	}
-	autoinc, err := db.loadAutoIncrement(bucket)
-	if err != nil {
-		return nil, err
-	}
-	rec := Record{
-		ID:      autoinc.inc(),
-		Payload: payloadBytes,
-	}
-	err = autoinc.save()
-	if err != nil {
-		return nil, err
-	}
-	file := filepath.Join(dir, fmt.Sprintf("%d.%s", rec.ID, db.ext))
-	if FileExists(file) {
-		return nil, stringValueError("key bucket already exists", file)
-	}
-	for _, label := range labels {
-		err := db.createLabel(bucket, rec.ID, label)
-		if err != nil {
-			return nil, err
-		}
-	}
-	err = ioutil.WriteFile(file, rec.bytes(), 0755)
-	return &rec, err
+	return ioutil.ReadFile(file)
 }

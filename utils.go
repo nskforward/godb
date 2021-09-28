@@ -3,6 +3,7 @@ package godb
 import (
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 )
 
@@ -24,4 +25,8 @@ func ProcessDir() string {
 		panic(err)
 	}
 	return dir
+}
+
+func Int64ToStr(number int64) string {
+	return strconv.FormatInt(number, 10)
 }
