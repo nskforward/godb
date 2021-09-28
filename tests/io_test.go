@@ -1,6 +1,8 @@
 package tests
 
 import (
+	"bytes"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -62,5 +64,44 @@ func TestKeys(t *testing.T) {
 	}
 	if strings.Join(keys, "") != "13" {
 		t.Fatalf("fail: %s, actual:'%v'", err, keys)
+	}
+}
+
+func TestAutoincrement(t *testing.T) {
+	storageRoot := "/Users/a17847869/go/src/github.com/nskforward/godb/tests/tmp"
+	db := godb.NewStorage(storageRoot)
+	err := db.RemoveAll("samples")
+	if err != nil {
+		t.Fatalf("fail: %s", err)
+	}
+	key, err := db.Autoincrement("samples")
+	if err != nil {
+		t.Fatalf("fail: %s", err)
+	}
+	err = db.Write("samples", strconv.FormatInt(key, 10), []byte("1"))
+	if err != nil {
+		t.Fatalf("fail: %s", err)
+	}
+	data, err := db.Read("samples", "1")
+	if err != nil {
+		t.Fatalf("fail: %s", err)
+	}
+	if !bytes.Equal(data, []byte("1")) {
+		t.Fatalf("fail: bytes are not the same")
+	}
+	key, err = db.Autoincrement("samples")
+	if err != nil {
+		t.Fatalf("fail: %s", err)
+	}
+	err = db.Write("samples", strconv.FormatInt(key, 10), []byte("2"))
+	if err != nil {
+		t.Fatalf("fail: %s", err)
+	}
+	data, err = db.Read("samples", "2")
+	if err != nil {
+		t.Fatalf("fail: %s", err)
+	}
+	if !bytes.Equal(data, []byte("2")) {
+		t.Fatalf("fail: bytes are not the same")
 	}
 }
