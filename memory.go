@@ -77,3 +77,19 @@ func (db *Storage) Keys(bucket string) ([]string, error) {
 	db.keysStorage[bucket] = keys
 	return keys, nil
 }
+
+func (db *Storage) ReadAll(bucket string) ([][]byte, error) {
+	buf := make([][]byte, 0, 64)
+	keys, err := db.Keys(bucket)
+	if err != nil {
+		return nil, err
+	}
+	for _, key := range keys {
+		data, err := db.Read(bucket, key)
+		if err != nil {
+			return nil, err
+		}
+		buf = append(buf, data)
+	}
+	return buf, nil
+}

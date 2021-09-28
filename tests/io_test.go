@@ -105,3 +105,35 @@ func TestAutoincrement(t *testing.T) {
 		t.Fatalf("fail: bytes are not the same")
 	}
 }
+
+func TestReadAll(t *testing.T) {
+	storageRoot := "/Users/a17847869/go/src/github.com/nskforward/godb/tests/tmp"
+	db := godb.NewStorage(storageRoot)
+	err := db.RemoveAll("samples")
+	if err != nil {
+		t.Fatalf("fail: %s", err)
+	}
+	err = db.Write("samples", "1", []byte("1"))
+	if err != nil {
+		t.Fatalf("fail: %s", err)
+	}
+	err = db.Write("samples", "2", []byte("2"))
+	if err != nil {
+		t.Fatalf("fail: %s", err)
+	}
+	err = db.Write("samples", "3", []byte("3"))
+	if err != nil {
+		t.Fatalf("fail: %s", err)
+	}
+	data, err := db.ReadAll("samples")
+	if err != nil {
+		t.Fatalf("fail: %s", err)
+	}
+	var buf bytes.Buffer
+	for _, item := range data {
+		buf.Write(item)
+	}
+	if !bytes.Equal(buf.Bytes(), []byte("123")) {
+		t.Fatalf("fail: bytes are not the same")
+	}
+}
