@@ -13,7 +13,7 @@ func FileExists(path string) bool {
 }
 
 func IsNameCorrect(name string) bool {
-	if len(name) == 0 {
+	if len(name) == 0 || name == ".." {
 		return false
 	}
 	return !strings.ContainsAny(name, "/\\:*?\"<>|")

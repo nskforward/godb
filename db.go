@@ -1,10 +1,11 @@
 package godb
 
 type Storage struct {
-	root        string
-	memStorage  map[string]map[string][]byte
-	diskTableMx *TwoLevelMutex
-	memTableMx  *TwoLevelMutex
+	root           string
+	payloadStorage map[string]map[string][]byte
+	keysStorage    map[string][]string
+	diskTableMx    *TwoLevelMutex
+	memTableMx     *TwoLevelMutex
 }
 
 func NewStorage(dir string) *Storage {
@@ -12,9 +13,10 @@ func NewStorage(dir string) *Storage {
 		panic(ValueError("storage directory must exists", dir))
 	}
 	return &Storage{
-		root:        dir,
-		memStorage:  make(map[string]map[string][]byte),
-		diskTableMx: NewTwoLevelMutex(),
-		memTableMx:  NewTwoLevelMutex(),
+		root:           dir,
+		payloadStorage: make(map[string]map[string][]byte),
+		keysStorage:    make(map[string][]string),
+		diskTableMx:    NewTwoLevelMutex(),
+		memTableMx:     NewTwoLevelMutex(),
 	}
 }
