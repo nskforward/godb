@@ -25,12 +25,12 @@ storageDir := filepath.Join(godb.ProcessDir(), "storage")
 
 db := godb.NewStorage(storageDir)
 
-err := godb.Write("samples", 1, []byte("hello world"))
+err := godb.Write("samples", "key", []byte("hello world"))
 if err != nil {
     panic(err)
 }
 
-_, data, err := godb.Read("samples", 1)
+_, data, err := godb.Read("samples", "key")
 if err != nil {
     panic(err)
 }
