@@ -11,3 +11,29 @@ High-performance embedded persistent key-value storage for Golang
 cpu: Intel(R) Core(TM) i7-9750H CPU @ 2.60GHz
 BenchmarkReadRandomDocument-12   7522686   156.9 ns/op   0 B/op   0 allocs/op
 ```
+
+## Get started
+
+Install 
+```
+go get -u github.com/nskforward/godb
+```
+
+Hello world
+```
+storageDir := filepath.Join(godb.ProcessDir(), "storage")
+
+db := godb.NewStorage(storageDir)
+
+err := godb.Write("samples", 1, []byte("hello world"))
+if err != nil {
+    panic(err)
+}
+
+_, data, err := godb.Read("samples", 1)
+if err != nil {
+    panic(err)
+}
+
+fmt.Println(string(data)) // hello world
+```
