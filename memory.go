@@ -11,7 +11,7 @@ func (db *Storage) Write(bucket string, key string, payload []byte) error {
 	return db.diskWrite(bucket, key, payload)
 }
 
-func (db *Storage) Read(bucket string, key string) (bool, []byte, error) {
+func (db *Storage) Read(bucket string, key string) ([]byte, error) {
 	mtx := db.memTableMx.Get(bucket)
 	mtx.Lock()
 	defer mtx.Unlock()
@@ -21,13 +21,13 @@ func (db *Storage) Read(bucket string, key string) (bool, []byte, error) {
 	}
 	cacheData, ok := m[key]
 	if !ok {
-		diskData, err := db.DiskRead(bucket, key)
+		diskData, err := db.diskRead(bucket, key)
 		if err != nil {
-			return false, nil, err
+			return nil, err
 		}
 		m[key] = diskData
 		db.memStorage[bucket] = m
-		return false, diskData, nil
+		return diskData, nil
 	}
-	return true, cacheData, nil
+	return cacheData, nil
 }
