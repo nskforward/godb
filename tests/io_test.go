@@ -2,6 +2,7 @@ package tests
 
 import (
 	"math/rand"
+	"strconv"
 	"sync/atomic"
 	"testing"
 
@@ -22,7 +23,7 @@ func BenchmarkWriteInsert(b *testing.B) {
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
 			atomic.AddInt64(&counter, 1)
-			err := db.Write("samples", counter, payload)
+			err := db.Write("samples", strconv.FormatInt(counter, 10), payload)
 			if err != nil {
 				b.Fatalf(`failed: %v`, err)
 			}
@@ -43,7 +44,7 @@ func BenchmarkWriteUpdate(b *testing.B) {
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
 			key := rand.Int63n(1000) + 1
-			err := db.Write("samples", key, payload)
+			err := db.Write("samples", strconv.FormatInt(key, 10), payload)
 			if err != nil {
 				b.Fatalf(`failed: %v`, err)
 			}
@@ -63,15 +64,11 @@ func BenchmarkWriteUpdate(b *testing.B) {
 func BenchmarkCache(b *testing.B) {
 	storageRoot := "/Users/a17847869/go/src/github.com/nskforward/godb/tests/tmp"
 	db := godb.NewStorage(storageRoot)
-	_, _, err := db.Read("samples", 10)
-	if err != nil {
-		b.Fatalf(`failed: %v`, err)
-	}
 	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
 			key := rand.Int63n(100) + 1
-			_, _, err := db.Read("samples", key)
+			_, _, err := db.Read("samples", strconv.FormatInt(key, 10))
 			if err != nil {
 				b.Fatalf(`failed: %v`, err)
 			}
@@ -82,18 +79,18 @@ func BenchmarkCache(b *testing.B) {
 func TestReadCache(t *testing.T) {
 	storageRoot := "/Users/a17847869/go/src/github.com/nskforward/godb/tests/tmp"
 	db := godb.NewStorage(storageRoot)
-	err := db.Write("samples", 10, []byte("1"))
+	err := db.Write("samples", "key", []byte("1"))
 	if err != nil {
 		t.Fatalf("fail: %s", err)
 	}
-	cache, _, err := db.Read("samples", 10)
+	cache, _, err := db.Read("samples", "key")
 	if err != nil {
 		t.Fatalf("fail: %s", err)
 	}
 	if cache {
 		t.Fatalf("cannot be cache")
 	}
-	cache, _, err = db.Read("samples", 10)
+	cache, _, err = db.Read("samples", "key")
 	if err != nil {
 		t.Fatalf("fail: %s", err)
 	}
@@ -105,22 +102,22 @@ func TestReadCache(t *testing.T) {
 func TestWriteCache(t *testing.T) {
 	storageRoot := "/Users/a17847869/go/src/github.com/nskforward/godb/tests/tmp"
 	db := godb.NewStorage(storageRoot)
-	err := db.Write("samples", 10, []byte("1"))
+	err := db.Write("samples", "key", []byte("1"))
 	if err != nil {
 		t.Fatalf("fail: %s", err)
 	}
-	cache, _, err := db.Read("samples", 10)
+	cache, _, err := db.Read("samples", "key")
 	if err != nil {
 		t.Fatalf("fail: %s", err)
 	}
 	if cache {
 		t.Fatalf("cannot be cache")
 	}
-	err = db.Write("samples", 10, []byte("1"))
+	err = db.Write("samples", "key", []byte("1"))
 	if err != nil {
 		t.Fatalf("fail: %s", err)
 	}
-	cache, _, err = db.Read("samples", 10)
+	cache, _, err = db.Read("samples", "key")
 	if err != nil {
 		t.Fatalf("fail: %s", err)
 	}

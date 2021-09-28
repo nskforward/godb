@@ -1,6 +1,6 @@
 package godb
 
-func (db *Storage) Write(bucket string, key int64, payload []byte) error {
+func (db *Storage) Write(bucket string, key string, payload []byte) error {
 	mtx := db.memTableMx.Get(bucket)
 	mtx.Lock()
 	defer mtx.Unlock()
@@ -11,13 +11,13 @@ func (db *Storage) Write(bucket string, key int64, payload []byte) error {
 	return db.diskWrite(bucket, key, payload)
 }
 
-func (db *Storage) Read(bucket string, key int64) (bool, []byte, error) {
+func (db *Storage) Read(bucket string, key string) (bool, []byte, error) {
 	mtx := db.memTableMx.Get(bucket)
 	mtx.Lock()
 	defer mtx.Unlock()
 	m, ok := db.memStorage[bucket]
 	if !ok {
-		m = make(map[int64][]byte)
+		m = make(map[string][]byte)
 	}
 	cacheData, ok := m[key]
 	if !ok {

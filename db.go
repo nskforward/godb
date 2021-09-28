@@ -2,7 +2,7 @@ package godb
 
 type Storage struct {
 	root        string
-	memStorage  map[string]map[int64][]byte
+	memStorage  map[string]map[string][]byte
 	diskTableMx *TwoLevelMutex
 	memTableMx  *TwoLevelMutex
 }
@@ -13,7 +13,7 @@ func NewStorage(dir string) *Storage {
 	}
 	return &Storage{
 		root:        dir,
-		memStorage:  make(map[string]map[int64][]byte),
+		memStorage:  make(map[string]map[string][]byte),
 		diskTableMx: NewTwoLevelMutex(),
 		memTableMx:  NewTwoLevelMutex(),
 	}
