@@ -1,9 +1,8 @@
 # godb
-Embedded persistent storage for Golang
+High-performance embedded persistent key-value storage for Golang
 
-- Document oriented key-value storage
 - In-memory cache for reading
-- Two level mutexes (thread safe)
+- Thread safe
 
 
 ## Benchmark
