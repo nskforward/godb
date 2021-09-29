@@ -14,7 +14,7 @@ BenchmarkReadRandomDocument-12   7522686   156.9 ns/op   0 B/op   0 allocs/op
 
 ## Get started
 
-Install 
+Installation
 ```
 go get -u github.com/nskforward/godb
 ```
