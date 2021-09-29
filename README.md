@@ -21,9 +21,7 @@ go get -u github.com/nskforward/godb
 
 Hello world
 ```
-storageDir := filepath.Join(godb.ProcessDir(), "storage")
-
-db := godb.NewStorage(storageDir)
+db := godb.NewStorage("storage") // will create 'storage' folder near executable file
 
 err := godb.Write("samples", "key", []byte("hello world"))
 if err != nil {
