@@ -21,7 +21,7 @@ go get -u github.com/nskforward/godb
 
 Simple example
 ```
-db := godb.NewStorage("storage") // will create 'storage' folder near executable file
+db := godb.NewStorage("storage") // will create "storage" folder near executable file
 
 err := godb.Write("samples", "key", []byte("hello world"))
 if err != nil {
@@ -33,5 +33,7 @@ if err != nil {
     panic(err)
 }
 
-fmt.Println(string(data)) // hello world
+fmt.Println(string(data)) // -> "hello world"
+
+// Your data is persistent now. Try "cat storage/samples/key" and see the result.
 ```
