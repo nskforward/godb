@@ -19,7 +19,7 @@ Install
 go get -u github.com/nskforward/godb
 ```
 
-Hello world
+Simple example
 ```
 db := godb.NewStorage("storage") // will create 'storage' folder near executable file
 
